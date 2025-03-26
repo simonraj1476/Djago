@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include "includes/header.html" %}
+
+<div class="container">
+    <!-- ✅ Left Side: Main Post -->
+    <div class="details-page">
+        <h1>{{ post.title }}</h1>
+        <p class="text-muted">Posted on {{ post.create_at|date:"F j, Y" }}</p>
+        <img src="{{ post.img_url }}" alt="{{ post.title }}">
+        <p>Details about <br>{{ post.content }}</p>
+
+        <!-- Add to Cart Button -->
+        <button class="custom-button" onclick="addToCart('{{ post.id }}', '{{ post.title }}', '{{ post.img_url }}')">
+            🛒 Add to Cart
+        </button>
+
+        <!-- View Cart Button -->
+        <a href="{% url 'cart' %}" class="custom-button">🛍️ View Cart</a>
+    </div>
+
+    <!-- ✅ Right Side: Related Posts -->
+    <div class="related-posts">
+        <h2>✨ Related Posts</h2>
+        <ul>
+            {% for related in postes %}
+                <li>
+                    <a href="{% url 'details' related.slug %}">
+                        <img src="{{ related.img_url }}" alt="{{ related.title }}">
+                        <p>{{ related.title }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<!-- ✅ JavaScript for Add to Cart -->
+<script>
+    function addToCart(id, title, img) {
+        let cart = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
+        let itemIndex = cart.findIndex(item => item.id === id);
+
+        if (itemIndex !== -1) {
+            cart[itemIndex].quantity += 1;
+        } else {
+            cart.push({ id: id, title: title, img: img, quantity: 1 });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("✅ " + title + " added to cart!");
+    }
+</script>
+
+<!-- ✅ Unique CSS -->
+<style>
+    /* ✅ Modern Font & Layout */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(120deg, #f7f7f7, #e3e3e3);
+        display: flex;
+        justify-content: center;
+        padding-top: 120px;
+        margin: 0;
+    }
+
+    /* ✅ Container */
+    .container {
+        display: flex;
+        width: 90%;
+        max-width: 1100px;
+        gap: 20px;
+    }
+
+    /* ✅ Main Post Styling */
+    .details-page {
+        width: 70%;
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .details-page:hover {
+        transform: translateY(-5px);
+    }
+
+    .details-page img {
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .details-page img:hover {
+        transform: scale(1.04);
+    }
+
+    /* ✅ Custom Buttons */
+    .custom-button {
+        background: #ff6b6b;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .custom-button:hover {
+        background: #ff4757;
+        transform: scale(1.05);
+    }
+
+    /* ✅ Related Posts */
+    .related-posts {
+        width: 30%;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .related-posts:hover {
+        transform: scale(1.03);
+    }
+
+    .related-posts h2 {
+        font-size: 22px;
+        margin-bottom: 10px;
+        color: #333;
+        text-align: center;
+    }
+
+    .related-posts ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .related-posts li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.05);
+        margin-bottom: 10px;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .related-posts li:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .related-posts img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 12px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .related-posts img:hover {
+        transform: scale(1.1);
+    }
+
+    /* ✅ Responsive Design */
+    @media screen and (max-width: 900px) {
+        .container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .details-page,
+        .related-posts {
+            width: 100%;
+        }
+
+        .related-posts {
+            order: 2;
+        }
+    }
+</style>
+
+{% endblock %}

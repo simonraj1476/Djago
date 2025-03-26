@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="about-section pt-5 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1 class="about-section-heading">About Us</h1>
+        <p class="about-section-description">
+          {{about_content}}
+        </p>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-12 col-md-6">
+        <img src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-responsive-website/healthy-food-plate-img.png" class="img-fluid rounded" alt="About Us Image">
+      </div>
+      <div class="col-12 col-md-6 d-flex flex-column justify-content-center">
+        <h2 class="about-section-subheading">Our Mission</h2>
+        <p class="about-section-text">
+          Our mission is to bring you delicious and healthy meals made from the freshest ingredients. We believe in sustainability, quality, and making every meal a memorable experience.
+        </p>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-12 text-center">
+        <h2 class="about-section-subheading">Why Choose Us?</h2>
+      </div>
+      <div class="col-12 col-md-4 text-center">
+        <div class="about-card p-3">
+          <i class="fas fa-leaf fa-3x text-success"></i>
+          <h3 class="mt-3">Fresh Ingredients</h3>
+          <p>We use only the freshest and highest-quality ingredients in our recipes.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 text-center">
+        <div class="about-card p-3">
+          <i class="fas fa-utensils fa-3x text-warning"></i>
+          <h3 class="mt-3">Delicious Recipes</h3>
+          <p>Our expert chefs create mouth-watering dishes to satisfy your cravings.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 text-center">
+        <div class="about-card p-3">
+          <i class="fas fa-heart fa-3x text-danger"></i>
+          <h3 class="mt-3">Customer Love</h3>
+          <p>We prioritize customer satisfaction and aim to provide an amazing dining experience.</p>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5 text-center">
+      <div class="col-12">
+        <h2 class="about-section-subheading">Get in Touch</h2>
+        <p>Have any questions or feedback? Contact us anytime!</p>
+        <a href="contact" class="btn btn-primary">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

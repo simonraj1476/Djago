@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="contact-section pt-5 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1 class="contact-section-heading">Contact Us</h1>
+        <p class="contact-section-description">
+          Have any questions? We'd love to hear from you!
+        </p>
+      </div>
+    </div>
+    {% for filed in form %}
+    {% if filed.errors %}
+    <div class="col-12"></div>
+    <span class="fw-blod">{{filed.label_tag}}</span>
+    {% for error in filed.errors  %}
+    <span class="text-danger">{{error}}</span>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% if success %}
+     <div class="alert alert-success" role= "alert">
+      {{success}}
+     </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <form method="POST" action="">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="name" value="{{name}}"  name="name" >
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" class="form-control" id="email" value="{{emails}}"  name="email" >
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Your Message</label>
+            <textarea class="form-control" id="message" value="{{msg}}" name="message" rows="4" ></textarea>
+          </div>
+          <button type="submit" class="custom-button">Send Message</button>
+        </form>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="contact-details">
+          <h2>Our Address</h2>
+          <p>123 Food Street, Chennai, Tamil Nadu, India</p>
+          <h2>Email Us</h2>
+          <p>support@foodmunch.com</p>
+          <h2>Call Us</h2>
+          <p>+91 98765 43210</p>
+        </div>
+        <div class="follow-us-section mt-4">
+          <h2>Follow Us</h2>
+          <div class="d-flex">
+            <div class="follow-us-icon-container">
+              <i class="fab fa-twitter icon"></i>
+            </div>
+            <div class="follow-us-icon-container">
+              <i class="fab fa-instagram icon"></i>
+            </div>
+            <div class="follow-us-icon-container">
+              <i class="fab fa-facebook icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

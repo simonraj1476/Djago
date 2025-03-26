@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include  'includes/header.html' %}
+
+<div class="order-recipe-section d-flex justify-content-center flex-column" style="background-image: url('{{ image_url }}'); height: 100vh; background-size: cover;">
+    <div class="text-center">
+        <h1 class="order-heading mb-3">Order Your Recipe</h1>
+        <p class="order-caption mb-4">Get your favorite dishes delivered to your doorstep!</p>
+    </div>
+</div>
+
+<div class="order-form-section pt-5 pb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="order-form-card p-4 shadow">
+                    <h2 class="text-center mb-4">Fill Your Order Details</h2>
+                    
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="recipe-name" class="form-label">Recipe Name</label>
+                            <input type="text" class="form-control" id="recipe-name" name="recipe_name" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone-number" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone-number" name="phone_number">
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="custom-button">Place Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .order-recipe-section {
+        text-align: center;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .order-heading {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+    .order-caption {
+        font-size: 1.5rem;
+    }
+    .order-form-card {
+        background: #fff;
+        border-radius: 10px;
+    }
+    .custom-button {
+        background-color: #ff9900;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .custom-button:hover {
+        background-color: #cc7a00;
+    }
+</style>
+
+{% include  'includes/footer.html' %}
+{% endblock %}

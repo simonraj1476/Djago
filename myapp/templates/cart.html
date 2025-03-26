@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include "includes/header.html" %}
+    <div class="page-container">
+    <div class="cart-container">
+        <div class="cart-page">
+            <h1>Your Cart</h1>
+            <div id="cart-items"></div>
+            <button onclick="clearCart()" class="clear-cart">Clear Cart</button>
+            <a href="/">Go Back</a>
+        </div>
+    </div>
+    <!-- Right Side: Related Posts -->
+    <div class="related-posts">
+        <h2>Related Posts</h2>
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <a href="{% url "details" post.slug  %}">
+                        <img src="{{ post.img_url }}" alt="{{ post.title }}" width="100">
+                        <p>{{ post.title }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</div>
+    <!-- JavaScript to Load Cart Items -->
+    <script>
+        function loadCart() {
+            let cart = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
+            let cartItemsDiv = document.getElementById("cart-items");
+
+            if (!cartItemsDiv) {
+                console.error("Cart items container not found.");
+                return;
+            }
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = "<p>Your cart is empty!</p>";
+                return;
+            }
+
+            let cartHTML = "<ul>";
+            cart.forEach(item => {
+                cartHTML += `<li>
+                    <img src="${item.img}" width="50" alt="${item.title}"> ${item.title} - Quantity: ${item.quantity}
+                </li>`;
+            });
+            cartHTML += "</ul>";
+
+            cartItemsDiv.innerHTML = cartHTML;
+        }
+
+        function clearCart() {
+            localStorage.removeItem("cart");
+            alert("Cart has been cleared!");
+            loadCart();
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCart);
+    </script>
+
+    <!-- Custom CSS (Content Aligned Left) -->
+    <style>
+        /* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Page Layout */
+.page-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    margin: auto;
+    padding-top: 100px; /* Ensures content doesn't overlap with header */
+    gap: 20px;
+}
+/* Cart Section */
+.cart-container {
+    width: 65%;
+    padding-top: 100px;
+}
+
+.cart-page {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+
+}
+
+.cart-page:hover {
+    transform: translateY(-5px);
+}
+
+.cart-page h1 {
+    font-size: 28px;
+    color: #333;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+#cart-items {
+    margin-top: 15px;
+}
+
+.clear-cart {
+    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.clear-cart:hover {
+    background: linear-gradient(45deg, #cc0000, #990033);
+}
+
+/* Related Posts */
+.related-posts {
+    width: 30%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    /* Fix Overlap */
+    margin-top: 80px; /* Space below header */
+    position: sticky; /* Stays in view when scrolling */
+    top: 90px; /* Adjust based on header height */
+    z-index: 10; /* Ensures it's above other elements */
+}
+
+/* Hover Effect - Slight Lift */
+.related-posts:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+/* Title Styling */
+.related-posts h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #222;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+/* Animated Underline Effect */
+.related-posts h2::after {
+    content: "";
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+    display: block;
+    margin: 5px auto 0;
+    border-radius: 2px;
+}
+
+/* Post List */
+.related-posts ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Individual Post */
+.related-posts li {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: 0.3s ease;
+    background: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    position: relative;
+}
+
+/* Hover Effect - Gradient Border */
+.related-posts li:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-left: 5px solid #ff4b2b;
+    transform: translateX(5px);
+}
+
+/* Post Image */
+.related-posts img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+/* Hover Effect on Image */
+.related-posts li:hover img {
+    transform: scale(1.1);
+}
+
+/* Post Title */
+.related-posts p {
+    margin-left: 12px;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0.9;
+}
+
+/* Hover Animation for Title */
+.related-posts li:hover p {
+    transform: translateX(5px);
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 900px) {
+    .page-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cart-container, .related-posts {
+        width: 100%;
+    }
+
+    .related-posts {
+        position: relative; /* Removes sticky effect on small screens */
+        margin-top: 20px;
+    }
+}
+
+
+    </style>
+
+{% endblock %}
