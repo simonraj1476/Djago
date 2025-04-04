@@ -44,7 +44,7 @@ def contact(request):
        msg = request.POST.get('massage')
        logger = logging.getLogger("testing")
        if form.is_valid():
-          logger.debug(f'post data is {form.cleaned_data['name']} {form.cleaned_data['email']} {form.cleaned_data['massage']}')
+          logger.debug(f"post data is {form.cleaned_data['name']} {form.cleaned_data['email']} {form.cleaned_data['massage']}")
           success_msg = "your email has successfuly sent!"
           return render(request, 'contact.html',{'form':form, 'success':success_msg})
        else:
