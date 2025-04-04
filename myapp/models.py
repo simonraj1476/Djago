@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
-
+from django.conf import settings
 # Create your models here.
 
 class post(models.Model):
@@ -11,6 +11,10 @@ class post(models.Model):
     img_url = models.URLField()
     create_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,related_name='post',null=True)
+
+    class Meta:
+        ordering = ["create_at"]
 
 
     def save(self, *args, **kwargs):
