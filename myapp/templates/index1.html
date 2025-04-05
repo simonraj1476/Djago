@@ -82,6 +82,7 @@
                   alt="{{ post.title }}"
                 />
                 <h1 class="menu-card-title">{{ post.title }}</h1>
+                <p><strong>Price:</strong> ₹{{ post.price }}</p>
               
                 <a href="{% url "details" post.slug  %}" class="menu-item-link">
                   View All

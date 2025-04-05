@@ -5,9 +5,11 @@
 <div class="container">
     <!-- ✅ Left Side: Main Post -->
     <div class="details-page">
+        <div class="post-card">
         <h1>{{ post.title }}</h1>
         <p class="text-muted">Posted on {{ post.create_at|date:"F j, Y" }}</p>
         <img src="{{ post.img_url }}" alt="{{ post.title }}">
+        <p><strong>Price:</strong> ₹{{ post.price }}</p>
         <p>Details about <br>{{ post.content }}</p>
 
         <!-- Add to Cart Button -->
@@ -16,8 +18,10 @@
         </button>
 
         <!-- View Cart Button -->
-        <a href="{% url 'cart' %}" class="custom-button">🛍️ View Cart</a>
-    </div>
+        <button class="custom-button" onclick="placeOrder()"> Place Order</button>
+
+        </div>
+    </div> 
 
     <!-- ✅ Right Side: Related Posts -->
     <div class="related-posts">
@@ -36,25 +40,70 @@
 </div>
 
 <!-- ✅ JavaScript for Add to Cart -->
+
 <script>
-    function addToCart(id, title, img) {
-        let cart = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
-        let itemIndex = cart.findIndex(item => item.id === id);
+function placeOrder() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        if (itemIndex !== -1) {
-            cart[itemIndex].quantity += 1;
+    fetch("{% url 'place_order' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ cart: cart })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("✅ Order placed successfully!");
+            localStorage.removeItem("cart");
+            window.location.href = "{% url 'order_success' %}";
         } else {
-            cart.push({ id: id, title: title, img: img, quantity: 1 });
+            alert("❌ Something went wrong!");
         }
+    })
+    .catch(error => console.error("Error:", error));
+}
 
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("✅ " + title + " added to cart!");
+function addToCart(id, title, img) {
+    let cart = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
+    let itemIndex = cart.findIndex(item => item.id === id);
+
+    if (itemIndex !== -1) {
+        cart[itemIndex].quantity += 1;
+    } else {
+        cart.push({ id: id, title: title, img: img, quantity: 1 });
     }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("✅ " + title + " added to cart!");
+}
+
+// Function to get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check cookie name
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
+
+
 
 <!-- ✅ Unique CSS -->
 <style>
     /* ✅ Modern Font & Layout */
+    /* Container now holds two sections: left post, right related */
     body {
         font-family: 'Poppins', sans-serif;
         background: linear-gradient(120deg, #f7f7f7, #e3e3e3);
@@ -63,30 +112,26 @@
         padding-top: 120px;
         margin: 0;
     }
-
-    /* ✅ Container */
+    
     .container {
         display: flex;
+        justify-content: space-between;
         width: 90%;
-        max-width: 1100px;
+        max-width: 1200px;
         gap: 20px;
+        flex-wrap: nowrap;
+        
     }
-
-    /* ✅ Main Post Styling */
+    
+    /* Left side: Post */
     .details-page {
         width: 70%;
-        background: #fff;
+        background: #ffffff;
         padding: 25px;
         border-radius: 15px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: transform 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     }
-
-    .details-page:hover {
-        transform: translateY(-5px);
-    }
-
+    
     .details-page img {
         width: 100%;
         max-height: 320px;
@@ -95,69 +140,60 @@
         margin-bottom: 15px;
         transition: transform 0.3s ease-in-out;
     }
-
-    .details-page img:hover {
-        transform: scale(1.04);
-    }
-
-    /* ✅ Custom Buttons */
-    .custom-button {
-        background: #ff6b6b;
-        color: white;
-        padding: 12px 18px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .custom-button:hover {
-        background: #ff4757;
-        transform: scale(1.05);
-    }
-
-    /* ✅ Related Posts */
+    /* Right side: Related posts */
     .related-posts {
         width: 30%;
-        background: white;
+        background: #fafafa;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+        height: fit-content;
     }
-
-    .related-posts:hover {
-        transform: scale(1.03);
+    
+    /* Post content layout inside details-page */
+    .post-content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
     }
-
-    .related-posts h2 {
-        font-size: 22px;
-        margin-bottom: 10px;
-        color: #333;
-        text-align: center;
+    
+    .post-info {
+        width: 70%;
     }
-
+    
+    .button-box {
+        width: 30%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .button-box .custom-button {
+        width: 100%;
+    }
+    
+    /* Related posts list styling */
     .related-posts ul {
         list-style: none;
         padding: 0;
+        margin-top: 15px;
+       
     }
-
+    
     .related-posts li {
         display: flex;
         align-items: center;
         padding: 10px;
         border-radius: 10px;
-        background: rgba(0, 0, 0, 0.05);
+        background: #f0f0f0;
         margin-bottom: 10px;
-        transition: background 0.3s ease-in-out;
+        transition: background 0.3s ease;
     }
-
+    
     .related-posts li:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: #e4e4e4;
     }
-
+    
     .related-posts img {
         width: 60px;
         height: 60px;
@@ -166,27 +202,38 @@
         margin-right: 12px;
         transition: transform 0.3s ease-in-out;
     }
-
+    
     .related-posts img:hover {
         transform: scale(1.1);
     }
-
-    /* ✅ Responsive Design */
+    
+    .related-posts h2 {
+        text-align: center;
+        margin-bottom: 12px;
+        font-size: 20px;
+    }
+    
+    /* Responsive: Stack vertically on small screens */
     @media screen and (max-width: 900px) {
         .container {
             flex-direction: column;
-            align-items: center;
         }
-
+    
         .details-page,
         .related-posts {
             width: 100%;
         }
-
-        .related-posts {
-            order: 2;
+    
+        .post-content-wrapper {
+            flex-direction: column;
+        }
+    
+        .post-info,
+        .button-box {
+            width: 100%;
         }
     }
+    
 </style>
 
 {% endblock %}

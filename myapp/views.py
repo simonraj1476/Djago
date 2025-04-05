@@ -10,6 +10,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework.decorators import api_view,permission_classes
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # Home page view
@@ -59,21 +64,6 @@ def about(request):
 def order(request):
    image_obj = img.objects.first()
    image_url = image_obj.imgs 
-   if request.method == "POST":
-        recipe_name = request.POST.get("recipe_name")
-        quantity = request.POST.get("quantity")
-        phone_number = request.POST.get("phone_number")
-        location = request.POST.get("location")
-
-        if recipe_name and quantity and phone_number and location:
-            Order.objects.create(
-                recipe_name=recipe_name,
-                quantity=quantity,
-                phone_number=phone_number,
-                location=location,
-            )
-            messages.success(request, "Your order has been placed successfully!")
-            return redirect("order")
 
    return render(request,'order.html',{"image_url": image_url})
 def cart(request):
@@ -105,3 +95,26 @@ def create_post(request):
       serializer.save(author=user)
       return Response(serializer.data)
    return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+
+def order_success(request):
+    return render(request, 'order_success.html')
+
+
+@csrf_exempt
+def place_order(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        cart_items = data.get("cart", [])
+
+        # send email to admin
+        message = "\n".join([f"{item['title']} x {item['quantity']}" for item in cart_items])
+        send_mail(
+            subject="🛍️ New Order Placed",
+            message=f"Order Details:\n\n{message}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.ADMIN_EMAIL],
+            fail_silently=False,
+        )
+
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)

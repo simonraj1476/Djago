@@ -267,3 +267,8 @@
     align-items: center;
     border-radius: 50%;
 }
+
+.post-card p strong {
+  color: #28a745;
+  font-size: 18px;
+}

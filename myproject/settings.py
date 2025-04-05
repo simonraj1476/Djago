@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta  
+import dj_database_url
+import pymysql
+
+pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -77,17 +81,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'blog',
-        'USER': 'root',
-        'PASSWORD' : 'simon@1476',
-        'HOST' : '127.0.0.1',
-        'PORT' : '3306',
-    }
-}
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default='mysql://unl4lk0fj8xwfm20:imeJer8RTqu2aHPH3Do7@bw779pmxrjapxvc2jzsy-mysql.services.clever-cloud.com:3306/bw779pmxrjapxvc2jzsy'
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -143,3 +142,14 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
 }
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or your provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'simonrajjoels@gmail.com'
+EMAIL_HOST_PASSWORD = 'cfggbbqalntlngfq'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+ADMIN_EMAIL = 'simonrajjoels@gmail.com'

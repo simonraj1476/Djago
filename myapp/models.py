@@ -8,6 +8,7 @@ class post(models.Model):
 
     title = models.CharField(max_length=100)
     content = models.TextField()
+    price = models.IntegerField(default=0)
     img_url = models.URLField()
     create_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True)

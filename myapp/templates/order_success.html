@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center" style="margin-top: 100px;">
+    <h1>✅ Order Placed!</h1>
+    <p>Thanks for your order. We'll deliver it soon!</p>
+    <a href="{% url 'index' %}" class="btn btn-primary mt-3">Back to Home</a>
+</div>
+<style>
+    .custom-button {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+    }
+    .custom-button:hover {
+        background-color: #218838;
+    }
+    </style>
+{% endblock %}
