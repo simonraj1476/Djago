@@ -8,7 +8,10 @@
             <h1>Your Cart</h1>
             <div id="cart-items"></div>
             <button onclick="clearCart()" class="clear-cart">Clear Cart</button>
-            <a href="/">Go Back</a>
+            <a href="{% url 'place_order' %}?recipe={{ posts.title }}&price={{ posts.price }}" class="btn btn-warning">
+                Place Order
+              </a>
+              
         </div>
     </div>
     <!-- Right Side: Related Posts -->
@@ -53,6 +56,19 @@
 
             cartItemsDiv.innerHTML = cartHTML;
         }
+        function placeCartOrder() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          
+            if (cart.length === 0) {
+              alert("Your cart is empty!");
+              return;
+            }
+          
+            const url = new URL("/place-order/", window.location.origin);
+            localStorage.setItem("order_items", JSON.stringify(cart));  // store cart for later use
+            window.location.href = url;
+          }
+        
 
         function clearCart() {
             localStorage.removeItem("cart");
@@ -232,20 +248,99 @@ body {
 /* Responsive Design */
 @media screen and (max-width: 900px) {
     .page-container {
-        flex-direction: column;
-        align-items: center;
+    
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
-
-    .cart-container, .related-posts {
+  
+    .cart-container{
+        padding-top: 100px;
         width: 100%;
     }
-
     .related-posts {
-        position: relative; /* Removes sticky effect on small screens */
-        margin-top: 20px;
+      width: 100%;
+      margin-top: 20px;
+      box-shadow: none;
+      padding: 15px;
     }
-}
-
+  
+    .cart-page {
+        
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      animation: fadeInUp 0.5s ease;
+    }
+  
+    .cart-page h1 {
+      font-size: 22px;
+      text-align: center;
+    }
+  
+    .clear-cart,
+    .btn-warning {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+    }
+  
+    #cart-items ul {
+      padding: 0;
+    }
+  
+    #cart-items li {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    .related-posts {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+  
+    .related-posts ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+  
+    .related-posts li {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      border-left: none;
+    }
+  
+    .related-posts img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
+  
+    .related-posts p {
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  
 
     </style>
 

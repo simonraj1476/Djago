@@ -4,89 +4,91 @@
 {% include 'includes/header.html' %}
 
 <!-- 🧾 Order Banner Section -->
-<div class="order-recipe-section d-flex justify-content-center flex-column" style="background-image: url('{{ image_url }}'); height: 100vh; background-size: cover; background-position: center;">
-    <div class="text-center text-white">
-        <h1 class="order-heading mb-3">Order Your Recipe</h1>
-        <p class="order-caption mb-4">Get your favorite dishes delivered to your doorstep!</p>
-    </div>
-</div>
+<div class="order-container">
+    <h2>Order Your Food</h2>
+    <form method="POST">
+      {% csrf_token %}
 
-<!-- 📝 Order Form Section -->
-<div class="order-form-section pt-5 pb-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="order-form-card p-4 shadow">
-                    <h2 class="text-center mb-4">Fill Your Order Details</h2>
+      <div class="form-group">
+        <label for="recipe">Recipe Name</label>
+        <input type="text" class="form-control" id="recipe" name="recipe" value="{{ request.GET.recipe }}" readonly>
+      </div>
 
-                    <form method="POST" action="{% url 'place_order' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="recipe-name" class="form-label">Recipe Name</label>
-                            <input type="text" class="form-control" id="recipe-name" name="recipe_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" required min="1">
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone-number" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone-number" name="phone_number" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="location" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="location" name="location" required>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="custom-button">🍽️ Place Order</button>
-                        </div>
-                    </form>
+      <div class="form-group">
+        <label for="price">Price per Unit (₹)</label>
+        <input type="number" class="form-control" id="price" name="price" value="{{ request.GET.price }}" readonly>
+      </div>
 
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+      <div class="form-group">
+        <label for="qty">Quantity</label>
+        <input type="number" class="form-control" id="qty" name="qty" value="1" min="1" required onchange="calculateTotal()">
+      </div>
 
+      <div class="form-group">
+        <label for="name">Customer Name</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Delivery Address</label>
+        <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+      </div>
+
+      <div class="total-box">
+        Total: ₹<span id="totalAmount">{{ request.GET.price }}</span>
+      </div>
+
+      <button type="submit" class="btn btn-pay btn-block mt-4">Proceed to Payment</button>
+    </form>
+  </div>
+
+  <script>
+    function calculateTotal() {
+      const qty = document.getElementById('qty').value;
+      const price = document.getElementById('price').value;
+      const total = qty * price;
+      document.getElementById('totalAmount').innerText = total;
+    }
+
+    // Run on page load to initialize correct total
+    window.onload = calculateTotal;
+  </script>
 <!-- 🎨 Styles -->
 <style>
-    .order-recipe-section {
-        text-align: center;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .order-container {
+      max-width: 600px;
+      margin: 50px auto;
+      
+      padding: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-
-    .order-heading {
-        font-size: 3rem;
-        font-weight: bold;
+    .order-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
     }
-
-    .order-caption {
-        font-size: 1.5rem;
+    .form-group label {
+      font-weight: 600;
     }
-
-    .order-form-card {
-        background: #fff;
-        border-radius: 10px;
+    .form-control {
+      border-radius: 8px;
     }
-
-    .custom-button {
-        background-color: #ff9900;
-        border: none;
-        padding: 10px 20px;
-        color: white;
-        font-size: 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: 0.3s;
+    .btn-pay {
+      background-color: #d0b200;
+      color: white;
+      font-weight: bold;
     }
-
-    .custom-button:hover {
-        background-color: #cc7a00;
+    .total-box {
+      font-weight: bold;
+      margin-top: 10px;
     }
-</style>
+  </style>
 
 {% include 'includes/footer.html' %}
 {% endblock %}

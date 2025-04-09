@@ -8,14 +8,14 @@ from django.contrib import messages
 from .serializers import UserRegisterSerializer,PostSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated 
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.decorators import api_view,permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.core.mail import send_mail
 from django.conf import settings
-
+import razorpay
 
 # Home page view
 def index(request):
@@ -79,6 +79,7 @@ def reset(request):
    return render(request,'password_reset.html')
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def registeruser(request):
    serializer = UserRegisterSerializer(data = request.data)
    if serializer.is_valid():
@@ -98,23 +99,51 @@ def create_post(request):
 
 def order_success(request):
     return render(request, 'order_success.html')
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-
-@csrf_exempt
 def place_order(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        cart_items = data.get("cart", [])
+        recipe = request.POST['recipe']
+        price = int(request.POST['price']) * 100  # in paise
+        qty = int(request.POST['qty'])
+        total = price * qty // 100
+        name = request.POST['name']
+        phone = request.POST['phone']
+        address = request.POST['address']
 
-        # send email to admin
-        message = "\n".join([f"{item['title']} x {item['quantity']}" for item in cart_items])
+        payment = client.order.create({
+            'amount': price * qty,
+            'currency': 'INR',
+            'payment_capture': '1'
+        })
+
+        request.session['order'] = {
+            'recipe': recipe,
+            'qty': qty,
+            'price': total,
+            'name': name,
+            'phone': phone,
+            'address': address
+        }
+
+        return render(request, 'payment.html', {
+            'payment': payment,
+            'key': settings.RAZORPAY_KEY_ID,
+            'amount': price * qty,
+            'recipe': recipe,
+            'name': name
+        })
+
+    return render(request, 'order.html')
+
+@csrf_exempt
+def payment_success(request):
+    order = request.session.get('order')
+    if order:
         send_mail(
-            subject="🛍️ New Order Placed",
-            message=f"Order Details:\n\n{message}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[settings.ADMIN_EMAIL],
-            fail_silently=False,
+            f"New Order: {order['recipe']}",
+            f"Name: {order['name']}\nPhone: {order['phone']}\nQty: {order['qty']}\nAddress: {order['address']}\nTotal: ₹{order['price']}",
+            settings.EMAIL_HOST_USER,
+            ['adminemail@gmail.com']
         )
-
-        return JsonResponse({"status": "success"})
-    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+    return render(request, 'order_success.html')

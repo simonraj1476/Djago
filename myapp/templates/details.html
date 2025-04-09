@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-{% include "includes/header.html" %}
+
 
 <div class="container">
     <!-- ✅ Left Side: Main Post -->
@@ -18,7 +18,8 @@
         </button>
 
         <!-- View Cart Button -->
-        <button class="custom-button" onclick="placeOrder()"> Place Order</button>
+        <a href="{% url 'place_order' %}?recipe={{ post.title|urlencode }}&price={{ post.price }}" class="btn btn-warning">Place Order</a>
+
 
         </div>
     </div> 
@@ -214,23 +215,70 @@ function getCookie(name) {
     }
     
     /* Responsive: Stack vertically on small screens */
-    @media screen and (max-width: 900px) {
+   
+    
+    @media screen and (max-width: 768px) {
         .container {
             flex-direction: column;
+            width: 95%;
+            padding: 10px;
+        }
+        body {
+            padding-top: 60px;
+          }
+    
+        .details-page {
+            width: 100%;
+            padding: 20px;
+           
         }
     
-        .details-page,
+        .details-page h1 {
+            font-size: 22px;
+            text-align: center;
+        }
+    
+        .details-page img {
+            max-height: 220px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+    
+        .custom-button,
+        .btn-warning {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+    
         .related-posts {
             width: 100%;
+            padding: 15px;
+            margin-top: 20px;
         }
     
-        .post-content-wrapper {
+        .related-posts ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+    
+        .related-posts li {
             flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
         }
     
-        .post-info,
-        .button-box {
+        .related-posts img {
+            margin-bottom: 8px;
             width: 100%;
+            height: auto;
+        }
+    
+        .related-posts p {
+            font-size: 14px;
         }
     }
     

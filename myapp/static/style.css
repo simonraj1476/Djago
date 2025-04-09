@@ -26,7 +26,11 @@
     color: #323f4b;
     font-family: "Roboto";
   }
-  #navItem {
+  #navItem7{
+    color: #323f4b;
+    font-family: "Roboto";
+  }
+  #navItem8{
     color: #323f4b;
     font-family: "Roboto";
   }
@@ -271,4 +275,73 @@
 .post-card p strong {
   color: #28a745;
   font-size: 18px;
+}
+@media (max-width: 768px) {
+  .banner-heading {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .banner-caption {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .custom-button,
+  .custom-outline-button {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .healthy-food-section-img,
+  .delivery-and-payment-section-img,
+  .thanking-customers-section-img {
+    width: 100%;
+    height: auto;
+  }
+
+  .wcu-card,
+  .menu-item-card {
+    margin-bottom: 20px;
+  }
+
+  .follow-us-icon-container {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+
+  .footer-section-mail-id,
+  .footer-section-address {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .menu-section-heading,
+  .delivery-and-payment-section-heading,
+  .healthy-food-section-heading,
+  .thanking-customers-section-heading,
+  .follow-us-section-heading {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .menu-card-title {
+    text-align: center;
+  }
+
+  .payment-card-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 16px;
+  }
 }

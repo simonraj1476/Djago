@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #74ebd5, #ACB6E5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .register-container {
+        background-color: white;
+        padding: 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 24px;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.2s ease;
+    }
+
+    input:focus {
+        border-color: #74ebd5;
+        outline: none;
+        box-shadow: 0 0 8px rgba(116, 235, 213, 0.4);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #74ebd5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: background 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #58d5c9;
+    }
+
+    #response {
+        margin-top: 20px;
+        text-align: center;
+        color: green;
+    }
+    @media screen and (max-width: 768px) {
+        body {
+            padding: 20px;
+            height: auto; /* remove full screen height */
+            align-items: flex-start;
+            background: linear-gradient(120deg, #74ebd5, #ACB6E5);
+        }
+    
+        .register-container {
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: none;
+            width: 100%;
+            max-width: 100%;
+        }
+    
+        h2 {
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+    
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            font-size: 15px;
+        }
+    
+        button {
+            font-size: 15px;
+            padding: 10px;
+        }
+    
+        #response {
+            font-size: 14px;
+        }
+    }
+    
+</style>
+
+<div class="register-container">
+    <h2>User Registration</h2>
+    <form id="registerForm">
+        {% csrf_token %}    
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Register</button>
+    </form>
+    <div style="text-align: center; margin-top: 20px; font-weight: bold;">
+        Or sign up with
+    </div>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+        <a href="{% url 'social:begin' 'google-oauth2' %}" class="social-login google">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20"> Continue with Google
+        </a>
+    
+        <a href="{% url 'social:begin' 'microsoft-graph' %}" class="social-login microsoft">
+            <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" width="20"> Continue with Microsoft
+        </a>
+    </div>
+    
+
+    <div id="response"></div>
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    document.getElementById("registerForm").addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch("/api/register/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken // ✅ Set it from cookie
+            },
+            body: JSON.stringify(data)
+        })
+        .then(async res => {
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = await res.json();
+                if (data.message) {
+                    document.getElementById("response").innerText = data.message;
+                } else if (data.error) {
+                    document.getElementById("response").innerText = JSON.stringify(data.error);
+                }
+            } else {
+                const text = await res.text();
+                document.getElementById("response").innerText = "Unexpected response: " + text;
+            }
+        })
+        .catch(error => {
+            document.getElementById("response").innerText = "Error: " + error;
+        });
+    });
+</script>
+
+{% endblock %}
